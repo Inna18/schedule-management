@@ -1,15 +1,17 @@
 <template>
   <div class="calendar">
-    <!--calendar header part-->
-    <div class="calendar-header">
-      <CalendarMonthSelector :selected-date="selectedDate" @month-selected="selectMonth" />
+    <div class="container">
+      <!--calendar header part-->
+      <div class="calendar-header">
+        <CalendarMonthSelector :selected-month="selectedMonth" @month-selected="selectMonth" />
+      </div>
+      <!--calendar grid weekend header-->
+      <CalendarWeekdays />
+      <!--calendar date grid-->
+      <ol class="days-grid">
+        <CalendarDaysGrid v-for="day in days" :key="day.date&&selectedDate" :day="day" :selected-date="selectedDate" :is-today="day.date===today" />
+      </ol>
     </div>
-    <!--calendar grid weekend header-->
-    <CalendarWeekdays />
-    <!--calendar date grid-->
-    <ol class="days-grid">
-      <CalendarDaysGrid v-for="day in days" :key="day.date" :day="day" />
-    </ol>
   </div>
 </template>
 
@@ -21,39 +23,46 @@ import {onBeforeMount, ref} from "vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import weekOfYear from "dayjs/plugin/weekOfYear"
+import {emitter} from "@/utils/emitter";
 
 dayjs.extend(weekday);
 dayjs.extend(weekOfYear);
 
+emitter.on("selected-date", (val) => {
+  selectedDate.value = val;
+})
+
+const today = ref(null)
 const days = ref([])
-const selectedDate = ref(null);
+const selectedMonth = ref(null);
+const selectedDate = ref(dayjs().format("YYYY-MM-DD"));
 const daysInMonth = ref(null);
 const month = ref(null);
 const year = ref(null);
 
 const selectMonth = (newSelectedMonth) => {
-  selectedDate.value = newSelectedMonth;
+  selectedMonth.value = newSelectedMonth;
 
-  month.value = Number(selectedDate.value.format("M"));
-  year.value = Number(selectedDate.value.format("YYYY"));
+  month.value = Number(selectedMonth.value.format("M"));
+  year.value = Number(selectedMonth.value.format("YYYY"));
 
-  daysInMonth.value = dayjs(selectedDate.value).daysInMonth();
+  daysInMonth.value = dayjs(selectedMonth.value).daysInMonth();
 
   days.value = [
     ...previousMonthDays(),
     ...currentMonthDays(),
     ...nextMonthDays()
   ]
-
 }
 
 onBeforeMount(() => {
-  selectedDate.value = dayjs();
+  today.value = dayjs().format("YYYY-MM-DD")
+  selectedMonth.value = dayjs();
 
-  month.value = Number(selectedDate.value.format("M"));
-  year.value = Number(selectedDate.value.format("YYYY"));
+  month.value = Number(selectedMonth.value.format("M"));
+  year.value = Number(selectedMonth.value.format("YYYY"));
 
-  daysInMonth.value = dayjs(selectedDate.value).daysInMonth();
+  daysInMonth.value = dayjs(selectedMonth.value).daysInMonth();
 
   days.value = [
     ...previousMonthDays(),
@@ -112,8 +121,15 @@ const nextMonthDays = () => {
 
 <style scoped>
 .calendar {
+    height: 417px;
+}
+.container {
     position: relative;
+    width: 400px;
     border: solid 1px #E9E9E9;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 0 auto;
 }
 .calendar-header {
     display: flex;
@@ -122,5 +138,6 @@ const nextMonthDays = () => {
 .days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    padding: 0;
 }
 </style>

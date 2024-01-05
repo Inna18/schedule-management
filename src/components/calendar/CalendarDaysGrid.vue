@@ -1,21 +1,40 @@
 <template>
   <li class="calendar-day">
-    <span @click="handleDate(day.date)">{{ dayjs(day.date).format("D") }}</span>
+    <span :class="{'is-today':isToday, 'not-this-month':!day.isCurrentMonth}"
+          @click="handleDate(day.date)">
+      <span class="day-digit"
+            :class="{'pick-date':selectedDate===dayjs(day.date).format('YYYY-MM-DD')}">
+        {{ dayjs(day.date).format("D") }}
+      </span>
+    </span>
   </li>
 </template>
 
 <script setup>
 import dayjs from "dayjs";
+import {emitter} from "@/utils/emitter";
+import {ref} from "vue";
 
 const props  = defineProps({
   day: {
     type: Object,
     required: true
-  }
-})
+  },
+  isToday: {
+    type: Boolean,
+    default: false
+  },
+  selectedDate: {
+    type: String,
+    required: true
+}
+});
+
+const pickDate = ref(null);
 
 const handleDate = (date) => {
-  console.log(dayjs(date).format("YYYY-MM-DD"))
+  emitter.emit("selected-date", date);
+  pickDate.value = date;
 }
 
 </script>
@@ -23,7 +42,8 @@ const handleDate = (date) => {
 <style scoped>
 .calendar-day {
     position: relative;
-    min-height: 100px;
+    height: 40px;
+    width: 40px;
     font-size: 16px;
     background-color: #fff;
     color: #000;
@@ -32,11 +52,23 @@ const handleDate = (date) => {
 }
 .calendar-day > span {
     display: flex;
-    justify-content: end;
+    justify-content: center;
     align-items: center;
     position: absolute;
-    right: 2px;
-    width: 100px;
-    height: 100px;
+    width: 40px;
+    height: 40px;
+}
+.day-digit {
+    cursor: pointer;
+}
+.is-today {
+    background: #B6Bfff;
+    border-radius: 50%;
+}
+.not-this-month {
+    color: #B1BBC9;
+}
+.pick-date {
+    color: #7661FF;
 }
 </style>
