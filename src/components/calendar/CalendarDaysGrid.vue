@@ -70,5 +70,6 @@ const handleDate = (date) => {
 }
 .pick-date {
     color: #7661FF;
+    font-weight: 600;
 }
 </style>
