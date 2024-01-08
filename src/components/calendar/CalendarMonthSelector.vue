@@ -35,16 +35,4 @@ const next = () => {
 </script>
 
 <style scoped>
-.calendar-month-selector {
-    display: flex;
-    align-items: center;
-}
-.calendar-month {
-    margin: 0 20px;
-    font-weight: 500;
-    font-size: 20px;
-}
-.arrow-icon {
-    cursor: pointer;
-}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="calendar">
-    <div class="container">
+    <div class="calendar-container">
       <!--calendar header part-->
       <div class="calendar-header">
         <CalendarMonthSelector :selected-month="selectedMonth" @month-selected="selectMonth" />
@@ -9,7 +9,7 @@
       <CalendarWeekdays />
       <!--calendar date grid-->
       <ol class="days-grid">
-        <CalendarDaysGrid v-for="day in days" :key="day.date&&selectedDate" :day="day" :selected-date="selectedDate" :is-today="day.date===today" />
+        <CalendarDaysGrid v-for="day in days" :key="day.date" :day="day" :selected-date="selectedDate" :is-today="day.date===today" />
       </ol>
     </div>
   </div>
@@ -120,24 +120,4 @@ const nextMonthDays = () => {
 </script>
 
 <style scoped>
-.calendar {
-    height: 417px;
-}
-.container {
-    position: relative;
-    width: 400px;
-    border: solid 1px #E9E9E9;
-    border-radius: 20px;
-    padding: 10px;
-    margin: 0 auto;
-}
-.calendar-header {
-    display: flex;
-    justify-content: center;
-}
-.days-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    padding: 0;
-}
 </style>

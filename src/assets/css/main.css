@@ -1,0 +1,221 @@
+/*Calendar.vue*/
+.calendar {
+    height: 417px;
+}
+.calendar-container {
+    position: relative;
+    width: 400px;
+    border: solid 1px #E9E9E9;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 0 auto;
+}
+.calendar-header {
+    display: flex;
+    justify-content: center;
+}
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 0;
+}
+
+/*CalendarDaysGrid.vue*/
+.calendar-day {
+    position: relative;
+    height: 40px;
+    width: 40px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #000;
+    padding: 5px;
+    list-style-type: none;
+}
+.calendar-day > span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+}
+.day-digit {
+    cursor: pointer;
+}
+.is-today {
+    background: #B6Bfff;
+    border-radius: 50%;
+}
+.not-this-month {
+    color: #B1BBC9;
+}
+.pick-date {
+    color: #7661FF;
+    font-weight: 600;
+}
+
+/*CalendarMonthSelector.vue*/
+.calendar-month-selector {
+    display: flex;
+    align-items: center;
+}
+.calendar-month {
+    margin: 0 20px;
+    font-weight: 500;
+    font-size: 20px;
+}
+.arrow-icon {
+    cursor: pointer;
+}
+
+/*CalendarWeekdays.vue*/
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 0;
+}
+.weekdays > * {
+    text-align: center;
+}
+.weekdays li {
+    list-style-type: none;
+    font-weight: 600;
+}
+.weekdays li:first-child {
+    color: #7661FF;
+}
+.weekdays li:last-child {
+    color: #7661FF;
+}
+
+/*Display.vue*/
+.display {
+    width: 500px;
+    padding: 10px 0;
+    border-radius: 20px;
+    background: #FFF;
+}
+.display .title-main {
+    width: 500px;
+}
+.display .title-main h1 {
+    text-align: center;
+}
+.title-1 {
+    color: #7661FF
+}
+.title-2 {
+    color: #262626
+}
+
+/*ToDo.vue*/
+.to-do {
+    width: 422px;
+    margin: 0 auto;
+}
+.to-do-list {
+    height: 180px;
+    margin: 20px 0;
+    overflow: auto;
+}
+.to-do-list .list ul {
+    padding: 0;
+}
+.to-do-list .list ul li {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 2px;
+    padding: 4px 2px;
+    list-style-type: none;
+    border-radius: 4px;
+    box-shadow: 0 0 4px #B6Bfff;
+}
+.to-do-list .empty-list {
+    display: flex;
+    height: inherit;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+}
+.to-do input {
+    width: 300px;
+}
+.input-section {
+    display: flex;
+    justify-content: space-between;
+}
+.error {
+    color: crimson;
+}
+.date {
+    display: flex;
+    justify-content: center;
+    width: 90px;
+    padding: 4px;
+    background: #B6Bfff;
+    font-weight: 600;
+    border-radius: 2px;
+}
+.input-form {
+    margin: 10px 0 30px;
+}
+.input-form .input-section .new-task-input {
+    height: 30px;
+    width: 80%;
+    border: 1px solid #E9E9E9;
+}
+.input-form .input-section .new-task-input:focus {
+    outline-color: #B6Bfff;
+}
+.register-btn {
+    width: 60px;
+    border: 2px solid #B6Bfff;
+    border-radius: 10px;
+    background: #B6Bfff;
+}
+.date-row {
+    display: flex;
+    align-items: center;
+}
+.task-date {
+    margin-right: 10px;
+}
+.task-icon-delete {
+    margin-top: 2px;
+    cursor: pointer;
+}
+.task-icon-edit {
+    margin-top: 2px;
+    margin-right: 6px;
+    cursor: pointer;
+}
+.to-do .to-do-list .list ul li .edit-input {
+    width: 60%;
+    border: 1px solid #E9E9E9;
+}
+.to-do .to-do-list .list ul li .edit-input:focus {
+    outline-color: #B6Bfff;
+}
+
+/* width */
+.scrollbar::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+.scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+.scrollbar::-webkit-scrollbar-thumb {
+    background: #B6Bfff;
+    border-radius: 4px;
+}
+
+/* Handle on hover */
+.scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #7661FF;
+}
+
+
