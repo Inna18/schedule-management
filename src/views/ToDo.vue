@@ -5,7 +5,7 @@
         <ul v-for="todo in toDoList" :key="todo.id">
           <li>
             <input class="edit-input" v-if="isEdit&&editId===todo.id" type="text" v-model="editToDo" @keyup.enter="updateTask(todo.id)" autofocus >
-            <span v-else>{{ todo.content }}</span>
+            <span v-else>{{ todo.content.length >= 19 ? todo.content.substring(0, 19) + "..." : todo.content }}</span>
             <div class="date-row">
               <span class="task-date">{{ todo.registerDate }}</span>
               <div class="task-icon-edit" @click="editInput(todo.id, todo.content)"><img src="@/assets/icon/edit.svg" alt="edit-icon"></div>
