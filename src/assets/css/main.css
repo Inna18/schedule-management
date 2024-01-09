@@ -31,7 +31,7 @@
     padding: 5px;
     list-style-type: none;
 }
-.calendar-day > span {
+.calendar-day > div {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,7 +43,12 @@
     cursor: pointer;
 }
 .is-today {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: #B6Bfff;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
 }
 .not-this-month {
@@ -52,6 +57,18 @@
 .pick-date {
     color: #7661FF;
     font-weight: 600;
+}
+.calendar-day .point-container {
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    margin-top: 4px;
+}
+.calendar-day .point-container .point {
+    background: #7661FF;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
 }
 
 /*CalendarMonthSelector.vue*/

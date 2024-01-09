@@ -42,6 +42,7 @@ const toDoList = ref([]);
 const error = ref(null);
 const isEdit = ref(false);
 const editId = ref(null);
+const savedDatesArr = ref([]);
 
 emitter.on("selected-date", (val) => {
   selectedDate.value = val;
@@ -67,7 +68,13 @@ const handleSubmit = (e) => {
 const getAllTasks = () => {
   read("/api/tasks", null).then(res => {
     toDoList.value = res.data;
-  })
+    let arr = [];
+    toDoList.value.map(task => {
+      arr.push(task.registerDate)
+    });
+    savedDatesArr.value = arr;
+    emitter.emit("saved-dates", savedDatesArr.value);
+  });
 }
 
 const createTask = () => {

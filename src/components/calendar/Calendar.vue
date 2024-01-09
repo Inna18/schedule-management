@@ -9,7 +9,7 @@
       <CalendarWeekdays />
       <!--calendar date grid-->
       <ol class="days-grid">
-        <CalendarDaysGrid v-for="day in days" :key="day.date" :day="day" :selected-date="selectedDate" :is-today="day.date===today" />
+        <CalendarDaysGrid v-for="day in days" :key="day.date" :day="day" :selected-date="selectedDate" :is-today="day.date===today" :saved="checkSaved(day.date)" />
       </ol>
     </div>
   </div>
@@ -30,7 +30,10 @@ dayjs.extend(weekOfYear);
 
 emitter.on("selected-date", (val) => {
   selectedDate.value = val;
-})
+});
+emitter.on("saved-dates", (val) => {
+  savedDatesArr.value = val;
+});
 
 const today = ref(null)
 const days = ref([])
@@ -39,6 +42,7 @@ const selectedDate = ref(dayjs().format("YYYY-MM-DD"));
 const daysInMonth = ref(null);
 const month = ref(null);
 const year = ref(null);
+const savedDatesArr = ref([]);
 
 const selectMonth = (newSelectedMonth) => {
   selectedMonth.value = newSelectedMonth;
@@ -50,6 +54,12 @@ onBeforeMount(() => {
   selectedMonth.value = dayjs();
   setDate();
 })
+
+const checkSaved = (date) => {
+  if (savedDatesArr.value.length > 0) {
+    return savedDatesArr.value.indexOf(date) !== -1;
+  } else return false;
+}
 
 const setDate = () => {
   month.value = Number(selectedMonth.value.format("M"));

@@ -1,12 +1,15 @@
 <template>
   <li class="calendar-day">
-    <span :class="{'is-today':isToday, 'not-this-month':!day.isCurrentMonth}"
+    <div :class="{'not-this-month':!day.isCurrentMonth}"
           @click="handleDate(day.date)">
-      <span class="day-digit"
-            :class="{'pick-date':selectedDate===dayjs(day.date).format('YYYY-MM-DD')}">
+      <div class="day-digit"
+          :class="{'is-today':isToday, 'pick-date':selectedDate===dayjs(day.date).format('YYYY-MM-DD')}">
         {{ dayjs(day.date).format("D") }}
-      </span>
-    </span>
+      </div>
+    </div>
+    <div v-if="saved" class="point-container">
+      <div class="point"></div>
+    </div>
   </li>
 </template>
 
@@ -27,7 +30,11 @@ const props  = defineProps({
   selectedDate: {
     type: String,
     required: true
-}
+  },
+  saved: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const pickDate = ref(null);
