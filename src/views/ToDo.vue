@@ -8,7 +8,7 @@
             <span v-else>{{ todo.content }}</span>
             <div class="date-row">
               <span class="task-date">{{ todo.registerDate }}</span>
-              <div class="task-icon-edit" @click="editTask(todo.id, todo.content)"><img src="@/assets/icon/edit.svg" alt="edit-icon"></div>
+              <div class="task-icon-edit" @click="editInput(todo.id, todo.content)"><img src="@/assets/icon/edit.svg" alt="edit-icon"></div>
               <div class="task-icon-delete" @click="deleteTask(todo.id)"><img src="@/assets/icon/trash.svg" alt="trash-icon"></div>
             </div>
           </li>
@@ -49,7 +49,7 @@ emitter.on("selected-date", (val) => {
 
 onMounted(() => {
   getAllTasks();
-})
+});
 
 const handleSubmit = (e) => {
   e.preventDefault();
@@ -87,7 +87,7 @@ const deleteTask = (id) => {
   })
 }
 
-const editTask = (id, task) => {
+const editInput = (id, task) => {
   if (isEdit.value === false) {
     isEdit.value = true;
     editId.value = id;

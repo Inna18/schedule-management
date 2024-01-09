@@ -42,7 +42,16 @@ const year = ref(null);
 
 const selectMonth = (newSelectedMonth) => {
   selectedMonth.value = newSelectedMonth;
+  setDate();
+}
 
+onBeforeMount(() => {
+  today.value = dayjs().format("YYYY-MM-DD")
+  selectedMonth.value = dayjs();
+  setDate();
+})
+
+const setDate = () => {
   month.value = Number(selectedMonth.value.format("M"));
   year.value = Number(selectedMonth.value.format("YYYY"));
 
@@ -54,22 +63,6 @@ const selectMonth = (newSelectedMonth) => {
     ...nextMonthDays()
   ]
 }
-
-onBeforeMount(() => {
-  today.value = dayjs().format("YYYY-MM-DD")
-  selectedMonth.value = dayjs();
-
-  month.value = Number(selectedMonth.value.format("M"));
-  year.value = Number(selectedMonth.value.format("YYYY"));
-
-  daysInMonth.value = dayjs(selectedMonth.value).daysInMonth();
-
-  days.value = [
-    ...previousMonthDays(),
-    ...currentMonthDays(),
-    ...nextMonthDays()
-  ]
-})
 
 const getWeekday = (date) => {
   return dayjs(date).weekday();
@@ -85,6 +78,7 @@ const currentMonthDays = () => {
 }
 
 const previousMonthDays = () => {
+  console.log("prev month: ")
   const firstWeekdayOfMonth = getWeekday(currentMonthDays()[0].date);
   console.log("firstWeekdayOfMonth", firstWeekdayOfMonth)
   const previousMonth = dayjs(`${year.value}-${month.value}-01`).subtract(1, "month");
@@ -97,6 +91,7 @@ const previousMonthDays = () => {
 
   return [...Array(daysFromPreviousMonth)].map((day, index) => {
     return {
+      // month(day) + 1 => month(day) count starts from 0
       date: dayjs(`${previousMonth.year()}-${previousMonth.month() + 1}-${previousMonthLastSundayDay + index}`).format("YYYY-MM-DD"),
       isCurrentMonth: false
     }
@@ -104,14 +99,16 @@ const previousMonthDays = () => {
 }
 
 const nextMonthDays = () => {
+  console.log("next month: ")
   const lastWeekdayOfMonth = getWeekday(currentMonthDays()[currentMonthDays().length-1].date);
   console.log("lastWeekdayOfMonth", lastWeekdayOfMonth)
   const nextMonth = dayjs(`${year.value}-${month.value}-01`).add(1, "month");
   console.log("nextMonth", nextMonth)
-  const daysFromNextMonth = lastWeekdayOfMonth ? 6 - lastWeekdayOfMonth : lastWeekdayOfMonth;
+  const daysFromNextMonth = 6 - lastWeekdayOfMonth;
   console.log("daysFromNextMonth", daysFromNextMonth)
   return [...Array(daysFromNextMonth)].map((day, index) => {
     return {
+      // month(day) + 1 => month(day) count starts from 0
       date: dayjs(`${nextMonth.year()}-${nextMonth.month() + 1}-${index + 1}`).format("YYYY-MM-DD"),
       isCurrentMonth: false
     };
