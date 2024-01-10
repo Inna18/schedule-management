@@ -15,7 +15,7 @@
 
 <script setup>
 import dayjs from "dayjs";
-import {emitter} from "@/utils/emitter";
+import {emitter} from "@/utils/util-emitter";
 import {ref} from "vue";
 
 const props  = defineProps({

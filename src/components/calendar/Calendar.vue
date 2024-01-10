@@ -9,7 +9,12 @@
       <CalendarWeekdays />
       <!--calendar date grid-->
       <ol class="days-grid">
-        <CalendarDaysGrid v-for="day in days" :key="day.date" :day="day" :selected-date="selectedDate" :is-today="day.date===today" :saved="checkSaved(day.date)" />
+        <CalendarDaysGrid v-for="day in days"
+                          :key="day.date"
+                          :day="day"
+                          :selected-date="selectedDate"
+                          :is-today="day.date===today"
+                          :saved="checkSaved(day.date)" />
       </ol>
     </div>
   </div>
@@ -23,7 +28,7 @@ import {onBeforeMount, ref} from "vue";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import weekOfYear from "dayjs/plugin/weekOfYear"
-import {emitter} from "@/utils/emitter";
+import {emitter} from "@/utils/util-emitter";
 
 dayjs.extend(weekday);
 dayjs.extend(weekOfYear);

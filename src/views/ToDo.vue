@@ -31,7 +31,7 @@
 
 <script setup>
 import {onMounted, ref, watch} from "vue";
-import {emitter} from "@/utils/emitter";
+import {emitter} from "@/utils/util-emitter";
 import dayjs from "dayjs";
 import {read, remove, update, write} from "@/utils/util-axios";
 
