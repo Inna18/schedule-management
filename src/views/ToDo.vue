@@ -7,7 +7,7 @@
             <input class="edit-input" v-if="isEdit&&editId===todo.id" type="text" v-model="editToDo" @keyup.enter="updateTask(todo.id)" autofocus >
             <span v-else>{{ todo.content.length >= 19 ? todo.content.substring(0, 19) + "..." : todo.content }}</span>
             <div class="date-row">
-              <span class="task-date">{{ todo.registerDate }}</span>
+              <span class="task-date">{{ formatDate(todo.registerDate) }}</span>
               <div class="task-icon-edit" @click="editInput(todo.id, todo.content)"><img src="@/assets/icon/edit.svg" alt="edit-icon"></div>
               <div class="task-icon-delete" @click="deleteTask(todo.id)"><img src="@/assets/icon/trash.svg" alt="trash-icon"></div>
             </div>
@@ -53,6 +53,10 @@ onMounted(() => {
   getAllTasks();
 });
 
+const formatDate = (date) => {
+  return dayjs(date).format("YYYY-MM-DD")
+}
+
 const handleSubmit = (e) => {
   e.preventDefault();
   error.value = null;
@@ -71,7 +75,7 @@ const getAllTasks = () => {
     toDoList.value = res.data.data;
     let arr = [];
     toDoList.value.map(task => {
-      arr.push(task.registerDate)
+      arr.push(dayjs(task.registerDate).format("YYYY-MM-DD"))
     });
     savedDatesArr.value = arr;
     emitter.emit("saved-dates", savedDatesArr.value);
