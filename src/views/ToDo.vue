@@ -3,7 +3,7 @@
     <div class="to-do-list scrollbar">
       <div class="list" v-if="toDoList.length > 0">
         <ul v-for="todo in toDoList" :key="todo.id">
-          <li>
+          <li :id="`input-sec-${todo.id}`">
             <input class="edit-input" v-if="isEdit&&editId===todo.id" type="text" v-model="editToDo" @keyup.enter="updateTask(todo.id)" autofocus >
             <span v-else>{{ todo.content.length >= 19 ? todo.content.substring(0, 19) + "..." : todo.content }}</span>
             <div class="date-row">
@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {emitter} from "@/utils/emitter";
 import dayjs from "dayjs";
 import {read, remove, update, write} from "@/utils/util-axios";
@@ -43,6 +43,7 @@ const error = ref(null);
 const isEdit = ref(false);
 const editId = ref(null);
 const savedDatesArr = ref([]);
+const inputEl = ref(null);
 
 emitter.on("selected-date", (val) => {
   selectedDate.value = val;
@@ -67,7 +68,7 @@ const handleSubmit = (e) => {
 
 const getAllTasks = () => {
   read("/api/tasks", null).then(res => {
-    toDoList.value = res.data;
+    toDoList.value = res.data.data;
     let arr = [];
     toDoList.value.map(task => {
       arr.push(task.registerDate)
@@ -82,8 +83,7 @@ const createTask = () => {
     registerDate: selectedDate.value,
     content: newToDo.value
   }
-  write("/api/tasks", newTask, null).then(res => {
-    toDoList.value = res.data;
+  write("/api/tasks", newTask, null).then(() => {
     getAllTasks();
   });
 }
@@ -96,9 +96,9 @@ const deleteTask = (id) => {
 
 const editInput = (id, task) => {
   if (isEdit.value === false) {
-    isEdit.value = true;
     editId.value = id;
     editToDo.value = task;
+    isEdit.value = true;
   }
 }
 
@@ -106,11 +106,30 @@ const updateTask = (id) => {
   if (editToDo.value !== "") {
     update(`/api/tasks/${id}`, { content: editToDo.value }).then(() => {
       getAllTasks();
-      isEdit.value = false;
+      editId.value = null;
       editToDo.value = "";
+      isEdit.value = false;
     });
+  } else { // if press enter when edited text is empty -> old value input
+    getAllTasks();
+    isEdit.value = false;
   }
 }
+
+const checkIfOutside = () => {
+  inputEl.value = document.getElementById(`input-sec-${editId.value}`);
+  document.addEventListener("click", e => {
+    if (!inputEl.value.contains(e.target)) {
+      updateTask(editId.value)
+    }
+  })
+}
+
+watch(isEdit, (val) => {
+  if (val === true) {
+    checkIfOutside();
+  }
+})
 </script>
 
 <style scoped>
