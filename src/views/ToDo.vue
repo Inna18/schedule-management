@@ -7,7 +7,7 @@
             <input class="edit-input"
                    v-if="isEdit&&editId===todo.id"
                    type="text" v-model="editToDo"
-                   @keyup.enter="updateTask(todo.id)"
+                   @keyup.enter="updateTask(todo.id, todo.content)"
                    maxlength="100"
                    autofocus >
             <span v-else>{{ todo.content.length >= 19 ? todo.content.substring(0, 19) + "..." : todo.content }}</span>
@@ -27,18 +27,20 @@
     <form class="input-form" @submit="handleSubmit">
       <div class="input-section">
         <input class="new-task-input" type="text" maxlength="100" v-model="newToDo" >
-        <button :disabled="!newToDo" class="register-btn">등록</button>
+        <button :disabled="!newToDo.trim()" class="register-btn">등록</button>
       </div>
       <div v-if="error" class="error">{{ error }}</div>
     </form>
   </div>
+  <Modal v-if="showModal" :content="modalContent" :modal-type="modalType" :key="editId" @show-modal="toggleModal" @confirm-modal="confirmModal"/>
 </template>
 
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref} from "vue";
 import {emitter} from "@/utils/util-emitter";
 import dayjs from "dayjs";
 import {read, remove, update, write} from "@/utils/util-axios";
+import Modal from "@/components/modal/Modal.vue";
 
 const selectedDate = ref(dayjs().format("YYYY-MM-DD"));
 const taskRegisterDate = ref(dayjs().format("YYYY-MM-DD"));
@@ -49,7 +51,12 @@ const error = ref(null);
 const isEdit = ref(false);
 const editId = ref(null);
 const savedDatesArr = ref([]);
-const inputEl = ref(null);
+const deleteId = ref(null);
+
+const showModal = ref(false);
+const modalContent = ref("");
+const modalType = ref("");
+
 
 emitter.on("selected-date", (val) => {
   selectedDate.value = val;
@@ -72,13 +79,12 @@ const handleSubmit = (e) => {
   e.preventDefault();
   error.value = null;
 
-  if (taskRegisterDate.value&&newToDo.value) {
+  if (taskRegisterDate.value && newToDo.value.trim() !== "") {
     createTask();
   } else {
     if (taskRegisterDate.value === null) error.value = "날짜를 선택해주세요"
     if (newToDo.value === "") error.value = "일정 내용을 입력해주세요"
   }
-  newToDo.value = "";
 }
 
 const getAllTasks = () => {
@@ -97,19 +103,53 @@ const getAllTasks = () => {
 }
 
 const createTask = () => {
-  let newTask = {
-    registerDate: taskRegisterDate.value,
-    content: newToDo.value
+  showModal.value = true;
+  modalContent.value = "일정을 저장하시겠습니까?"
+  modalType.value = "저장"
+}
+
+const confirmModal = ({confirm, type}) => {
+  // 저장 && 수정
+  if (confirm === true && type === "저장") {
+    let newTask = {
+      registerDate: taskRegisterDate.value,
+      content: newToDo.value
+    }
+    write("/api/tasks", newTask, null).then(() => {
+      getAllTasks();
+      showModal.value = false;
+      newToDo.value = "";
+    });
   }
-  write("/api/tasks", newTask, null).then(() => {
-    getAllTasks();
-  });
+
+  // 삭제
+  if (confirm === true && type === "삭제") {
+    remove(`/api/tasks/${deleteId.value}`, null).then(() => {
+      getAllTasks();
+      showModal.value = false;
+      deleteId.value = null;
+    })
+  }
+
+  // 수정
+  if (confirm === true && type === "수정") {
+    if (editToDo.value.trim() !== "") {
+      update(`/api/tasks/${editId.value}`, {content: editToDo.value}, null).then(() => {
+        getAllTasks();
+        showModal.value = false;
+        editId.value = null;
+        editToDo.value = "";
+        isEdit.value = false;
+      });
+    }
+  }
 }
 
 const deleteTask = (id) => {
-  remove(`/api/tasks/${id}`, null).then(() => {
-    getAllTasks();
-  })
+  showModal.value = true;
+  modalContent.value = "일정을 삭제하시겠습니까?"
+  modalType.value = "삭제"
+  deleteId.value = id;
 }
 
 const editInput = (id, task) => {
@@ -120,34 +160,23 @@ const editInput = (id, task) => {
   }
 }
 
-const updateTask = (id) => {
-  if (editToDo.value !== "") {
-    update(`/api/tasks/${id}`, { content: editToDo.value }, null).then(() => {
-      getAllTasks();
-      editId.value = null;
-      editToDo.value = "";
-      isEdit.value = false;
-    });
+const updateTask = (id, content) => {
+  if (editToDo.value !== "" && editToDo.value !== content) {
+    showModal.value = true;
+    modalContent.value = "일정을 수정하시겠습니까?"
+    modalType.value = "수정"
+    editId.value = id;
   } else { // if press enter when edited text is empty -> old value input
     getAllTasks();
     isEdit.value = false;
+    editId.value = null;
   }
 }
 
-const checkIfOutside = () => {
-  inputEl.value = document.getElementById(`input-sec-${editId.value}`);
-  document.addEventListener("click", e => {
-    if (!inputEl.value.contains(e.target)) {
-      updateTask(editId.value)
-    }
-  })
+const toggleModal = ({val}) => {
+  showModal.value = val;
+  isEdit.value = false;
 }
-
-watch(isEdit, (val) => {
-  if (val === true) {
-    checkIfOutside();
-  }
-})
 </script>
 
 <style scoped>
