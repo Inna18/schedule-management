@@ -8,8 +8,8 @@ const write = (url, body, params) => {
   return $axios.post(url, body, { params: params });
 }
 
-const update = (url, params) => {
-  return $axios.patch(url, null, { params: params });
+const update = (url, data, params) => {
+  return $axios.patch(url, data, { params: params });
 }
 
 const remove = (url, params) => {

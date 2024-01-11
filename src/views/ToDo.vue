@@ -4,7 +4,12 @@
       <div class="list" v-if="toDoList.length > 0">
         <ul v-for="todo in toDoList" :key="todo.id">
           <li :id="`input-sec-${todo.id}`">
-            <input class="edit-input" v-if="isEdit&&editId===todo.id" type="text" v-model="editToDo" @keyup.enter="updateTask(todo.id)" autofocus >
+            <input class="edit-input"
+                   v-if="isEdit&&editId===todo.id"
+                   type="text" v-model="editToDo"
+                   @keyup.enter="updateTask(todo.id)"
+                   maxlength="100"
+                   autofocus >
             <span v-else>{{ todo.content.length >= 19 ? todo.content.substring(0, 19) + "..." : todo.content }}</span>
             <div class="date-row">
               <span class="task-date">{{ formatDate(todo.registerDate) }}</span>
@@ -108,7 +113,7 @@ const editInput = (id, task) => {
 
 const updateTask = (id) => {
   if (editToDo.value !== "") {
-    update(`/api/tasks/${id}`, { content: editToDo.value }).then(() => {
+    update(`/api/tasks/${id}`, { content: editToDo.value }, null).then(() => {
       getAllTasks();
       editId.value = null;
       editToDo.value = "";
