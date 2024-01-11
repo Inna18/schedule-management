@@ -23,6 +23,7 @@
 /*CalendarDaysGrid.vue*/
 .calendar-day {
     position: relative;
+    display: flex;
     height: 40px;
     width: 40px;
     font-size: 16px;
@@ -59,10 +60,11 @@
     font-weight: 600;
 }
 .calendar-day .point-container {
-    display: flex;
-    justify-content: center;
-    align-items: end;
-    margin-top: 4px;
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    margin-top: 34px;
+    margin-left: 18px;
 }
 .calendar-day .point-container .point {
     background: #7661FF;

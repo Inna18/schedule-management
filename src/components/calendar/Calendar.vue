@@ -51,6 +51,7 @@ const savedDatesArr = ref([]);
 
 const selectMonth = (newSelectedMonth) => {
   selectedMonth.value = newSelectedMonth;
+  emitter.emit("month-changed", selectedMonth.value);
   setDate();
 }
 

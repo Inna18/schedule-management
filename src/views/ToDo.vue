@@ -23,7 +23,7 @@
         <div>등록된 일정이 없습니다.</div>
       </div>
     </div>
-    <div class="date">{{ selectedDate ? selectedDate : "미선택" }}</div>
+    <div class="date">{{ taskRegisterDate ? taskRegisterDate : "미선택" }}</div>
     <form class="input-form" @submit="handleSubmit">
       <div class="input-section">
         <input class="new-task-input" type="text" maxlength="100" v-model="newToDo" >
@@ -41,6 +41,7 @@ import dayjs from "dayjs";
 import {read, remove, update, write} from "@/utils/util-axios";
 
 const selectedDate = ref(dayjs().format("YYYY-MM-DD"));
+const taskRegisterDate = ref(dayjs().format("YYYY-MM-DD"));
 const newToDo = ref("");
 const editToDo = ref("");
 const toDoList = ref([]);
@@ -52,7 +53,12 @@ const inputEl = ref(null);
 
 emitter.on("selected-date", (val) => {
   selectedDate.value = val;
+  taskRegisterDate.value = selectedDate.value
 });
+emitter.on("month-changed", (val) => {
+  selectedDate.value = val.format("YYYY-MM-DD");
+  getAllTasks();
+})
 
 onMounted(() => {
   getAllTasks();
@@ -66,17 +72,20 @@ const handleSubmit = (e) => {
   e.preventDefault();
   error.value = null;
 
-  if (selectedDate.value&&newToDo.value) {
+  if (taskRegisterDate.value&&newToDo.value) {
     createTask();
   } else {
-    if (selectedDate.value === null) error.value = "날짜를 선택해주세요"
+    if (taskRegisterDate.value === null) error.value = "날짜를 선택해주세요"
     if (newToDo.value === "") error.value = "일정 내용을 입력해주세요"
   }
   newToDo.value = "";
 }
 
 const getAllTasks = () => {
-  read("/api/tasks", null).then(res => {
+  let year = Number(dayjs(selectedDate.value).year());
+  let month = Number(dayjs(selectedDate.value).month() + 1) < 10 ? `0${Number(dayjs(selectedDate.value).month() + 1)}`: Number(dayjs(selectedDate.value).month() + 1);
+  let lastDayOdMonth = dayjs(selectedDate.value).daysInMonth();
+  read("/api/tasks", { start: `${year}-${month}-01`, end: `${year}-${month}-${lastDayOdMonth}` }).then(res => {
     toDoList.value = res.data.data;
     let arr = [];
     toDoList.value.map(task => {
@@ -89,7 +98,7 @@ const getAllTasks = () => {
 
 const createTask = () => {
   let newTask = {
-    registerDate: selectedDate.value,
+    registerDate: taskRegisterDate.value,
     content: newToDo.value
   }
   write("/api/tasks", newTask, null).then(() => {
